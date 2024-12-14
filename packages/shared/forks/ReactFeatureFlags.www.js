@@ -59,6 +59,8 @@ export const disableInputAttributeSyncing = false;
 export const enableLegacyFBSupport = true;
 export const enableLazyContextPropagation = true;
 
+export const enableYieldingBeforePassive = false;
+
 export const enableHydrationLaneScheduling = true;
 
 export const enableComponentPerformanceTrack = false;
