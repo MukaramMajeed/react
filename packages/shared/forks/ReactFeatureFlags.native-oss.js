@@ -80,7 +80,7 @@ export const enableUseResourceEffectHook = false;
 
 export const enableHydrationLaneScheduling = true;
 
-export const enableYieldingBeforePassive = true;
+export const enableYieldingBeforePassive = false;
 
 // Profiling Only
 export const enableProfilerTimer = __PROFILE__;
