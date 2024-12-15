@@ -19,3 +19,5 @@ export const {
 export const frameYieldMs = 10;
 export const enableSchedulerDebugging = true;
 export const enableProfiling = __DEV__;
+
+export const enableAlwaysYieldScheduler = false;

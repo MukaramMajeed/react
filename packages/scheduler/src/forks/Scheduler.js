@@ -18,6 +18,7 @@ import {
   userBlockingPriorityTimeout,
   lowPriorityTimeout,
   normalPriorityTimeout,
+  enableAlwaysYieldScheduler,
 } from '../SchedulerFeatureFlags';
 
 import {push, pop, peek} from '../SchedulerMinHeap';
@@ -195,9 +196,11 @@ function workLoop(initialTime: number) {
     currentTask !== null &&
     !(enableSchedulerDebugging && isSchedulerPaused)
   ) {
-    if (currentTask.expirationTime > currentTime && shouldYieldToHost()) {
-      // This currentTask hasn't expired, and we've reached the deadline.
-      break;
+    if (!enableAlwaysYieldScheduler) {
+      if (currentTask.expirationTime > currentTime && shouldYieldToHost()) {
+        // This currentTask hasn't expired, and we've reached the deadline.
+        break;
+      }
     }
     // $FlowFixMe[incompatible-use] found when upgrading Flow
     const callback = currentTask.callback;
@@ -241,6 +244,12 @@ function workLoop(initialTime: number) {
       pop(taskQueue);
     }
     currentTask = peek(taskQueue);
+    if (enableAlwaysYieldScheduler) {
+      if (currentTask === null || currentTask.expirationTime > currentTime) {
+        // This currentTask hasn't expired we yield to the browser task.
+        break;
+      }
+    }
   }
   // Return whether there's additional work
   if (currentTask !== null) {
@@ -458,7 +467,7 @@ let frameInterval = frameYieldMs;
 let startTime = -1;
 
 function shouldYieldToHost(): boolean {
-  if (needsPaint) {
+  if (!enableAlwaysYieldScheduler && needsPaint) {
     // Yield now.
     return true;
   }
